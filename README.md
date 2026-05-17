@@ -1,6 +1,6 @@
 # mdcheck
 
-`mdcheck` is a small Python CLI that scans a folder for Markdown files, extracts links, validates local targets and optional HTTP(S) URLs, and produces a Markdown report.
+`mdcheck` is a Python CLI that scans a folder for Markdown files, extracts links, validates local targets and optional HTTP(S) URLs, and produces a Markdown report.
 
 ## Features
 
@@ -12,7 +12,12 @@
 
 ## Install From Source
 
+Recommended:
+
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -e .
 ```
 
@@ -20,6 +25,19 @@ For development tools:
 
 ```bash
 python -m pip install -e ".[dev]"
+```
+
+On Debian/Ubuntu, system Python is often externally managed, so `python3 -m pip install -e .` outside a virtual environment can fail with a PEP 668 error. If needed, install the required system packages first:
+
+```bash
+sudo apt update
+sudo apt install -y python3-venv python3-pip
+```
+
+If `python3 -m venv .venv` is unavailable, install:
+
+```bash
+sudo apt install -y python3-full
 ```
 
 ## Usage
