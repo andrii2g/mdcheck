@@ -14,6 +14,7 @@ _MARKDOWN_IT = MarkdownIt("commonmark")
 _INLINE_FORMATTING = str.maketrans("", "", "*_`[]")
 _PUNCTUATION = string.punctuation.replace("-", "")
 _PUNCTUATION_TABLE = str.maketrans("", "", _PUNCTUATION)
+_TRAILING_CUSTOM_ID_RE = re.compile(r"\s+\{#[^}]+\}\s*$")
 
 
 def get_anchors(markdown_file: Path, *, anchor_cache: AnchorCache) -> set[str]:
@@ -49,7 +50,7 @@ def extract_anchors(markdown_file: Path) -> set[str]:
 
 
 def github_slugify(heading_text: str, *, existing: dict[str, int]) -> str:
-    text = heading_text.lower().strip()
+    text = _TRAILING_CUSTOM_ID_RE.sub("", heading_text).lower().strip()
     text = text.translate(_INLINE_FORMATTING)
     text = text.translate(_PUNCTUATION_TABLE)
     text = re.sub(r"\s+", "-", text)
