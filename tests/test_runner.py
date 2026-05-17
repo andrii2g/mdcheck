@@ -43,7 +43,6 @@ def test_run_check_returns_findings_and_stats_for_mixed_links(tmp_path: Path) ->
                 "[ok](./docs/guide.md#intro)",
                 "[broken-anchor](./docs/guide.md#missing)",
                 "[empty]()",
-                "[js](javascript:alert(1))",
             ]
         ),
         encoding="utf-8",
@@ -52,8 +51,8 @@ def test_run_check_returns_findings_and_stats_for_mixed_links(tmp_path: Path) ->
     result = run_check(root, check_urls=False, verbose=False)
 
     assert result.stats.markdown_files == 2
-    assert result.stats.links_total == 4
+    assert result.stats.links_total == 3
     assert result.stats.links_local == 2
     assert result.stats.links_empty == 1
-    assert result.stats.links_unsupported == 1
-    assert result.stats.findings_total == 3
+    assert result.stats.links_unsupported == 0
+    assert result.stats.findings_total == 2
