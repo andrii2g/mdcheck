@@ -49,3 +49,27 @@ def test_path_is_required() -> None:
 
     assert result.returncode == 2
     assert "PATH" in result.stderr
+
+
+def test_default_run_prints_markdown_report_and_returns_findings_exit_code(tmp_path: Path) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text("[missing](./missing.md)\n", encoding="utf-8")
+
+    result = run_module(str(tmp_path))
+
+    assert result.returncode == 1
+    assert "# mdcheck report" in result.stdout
+    assert "MISSING_FILE" in result.stdout
+
+
+def test_report_option_writes_file_and_prints_summary(tmp_path: Path) -> None:
+    readme = tmp_path / "README.md"
+    report_path = tmp_path / "out" / "mdcheck.md"
+    readme.write_text("# ok\n", encoding="utf-8")
+
+    result = run_module(str(tmp_path), "--report", str(report_path))
+
+    assert result.returncode == 0
+    assert report_path.exists()
+    assert "# mdcheck report" in report_path.read_text(encoding="utf-8")
+    assert "Wrote report to" in result.stdout
