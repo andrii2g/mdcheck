@@ -47,3 +47,24 @@ def test_write_report_creates_parent_directories(tmp_path: Path) -> None:
     write_report("# report\n", report_path)
 
     assert report_path.read_text(encoding="utf-8") == "# report\n"
+
+
+def test_format_report_uses_absolute_path_when_outside_root(tmp_path: Path) -> None:
+    root = tmp_path.resolve()
+    external = Path("C:/external/README.md")
+    finding = Finding(
+        kind=FindingKind.MISSING_FILE,
+        source_file=external,
+        line=3,
+        target="./missing.md",
+        message="Local path was not found: ./missing.md",
+    )
+    result = CheckResult(
+        root=root,
+        findings=[finding],
+        stats=CheckStats(markdown_files=1, findings_total=1),
+    )
+
+    report = format_report(result)
+
+    assert "C:/external/README.md" in report or "C:\\external\\README.md" in report

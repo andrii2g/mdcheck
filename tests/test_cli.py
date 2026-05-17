@@ -73,3 +73,13 @@ def test_report_option_writes_file_and_prints_summary(tmp_path: Path) -> None:
     assert report_path.exists()
     assert "# mdcheck report" in report_path.read_text(encoding="utf-8")
     assert "Wrote report to" in result.stdout
+
+
+def test_runtime_error_returns_exit_code_2(tmp_path: Path) -> None:
+    file_path = tmp_path / "not-a-directory.md"
+    file_path.write_text("# nope\n", encoding="utf-8")
+
+    result = run_module(str(file_path))
+
+    assert result.returncode == 2
+    assert "not a directory" in result.stderr.lower()
